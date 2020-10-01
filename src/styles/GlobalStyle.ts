@@ -10,7 +10,7 @@ export default createGlobalStyle`
   body {
     background: #26262b;
     color: #f2f2f4;
-    font-family:  Helvetica, Arial, sans-serif
+    font-family:  Roboto, Helvetica, Arial, sans-serif
   }
 
   button {
