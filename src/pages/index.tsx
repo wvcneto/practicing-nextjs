@@ -1,24 +1,17 @@
 import { GetServerSideProps } from 'next';
 import { Title } from '../styles/pages/Home';
-
+import Link from 'next/link'
 import Head from '@/components/SEO';
-
-interface IProduct {
-  id: string;
-  title: string;
-}
+import Prismic from 'prismic-javascript';
+import PrismicDOM from 'prismic-dom';
+import { client } from '@/lib/prismic';
+import { Document } from 'prismic-javascript/types/documents';
 
 interface HomeProps {
-  recommendedProducts: IProduct[];
+  recommendedProducts: Document[];
 }
 
-export default function Home({ recommendedProducts }: HomeProps) {  
-  async function handleSum() {
-    const math = (await import('../lib/math')).default;
-
-    alert(math.sum(3, 4));
-  }
-  
+export default function Home({ recommendedProducts }: HomeProps) {    
   return (
     <div>
       <Head 
@@ -33,27 +26,28 @@ export default function Home({ recommendedProducts }: HomeProps) {
           {recommendedProducts.map(recommendedProducts => {
             return (
               <li key={recommendedProducts.id}>
-                {recommendedProducts.title}
+                <Link href={`/catalog/products/${recommendedProducts.uid}`}>
+                  <a>
+                    {PrismicDOM.RichText.asText(recommendedProducts.data.title)}
+                  </a>
+                </Link>
               </li>
             );
           })}
         </ul>
       </section>
-
-      <button onClick={handleSum}>
-        Sum(Dynamic Import)
-      </button>
     </div>
   )
 }
 
 export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
-  const reponse = await fetch('http://localhost:3333/recommended');
-  const recommendedProducts = await reponse.json();
+  const recommendedProducts = await client().query([
+    Prismic.Predicates.at('document.type', 'product')
+  ]);
 
   return {
     props: {
-      recommendedProducts
+      recommendedProducts: recommendedProducts.results,
     }
   }
      
