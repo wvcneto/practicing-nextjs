@@ -22,7 +22,7 @@ export default function Category({ category, products }: CategoryProps) {
   return (
     <div>
       <h1>
-      {PrismicDOM.RichText.asText(category.data.title)}
+        {PrismicDOM.RichText.asText(category.data.title)}
       </h1>
       <ul>
         {products.map(product => {
